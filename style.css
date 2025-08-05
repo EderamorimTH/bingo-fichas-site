@@ -1,31 +1,56 @@
 body {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-.produto-btn, .carrinho-item button {
-  padding: 8px 12px;
-  margin: 5px;
-  cursor: pointer;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-.produto-btn:hover, .carrinho-item button:hover {
-  background-color: #45a049;
-}
-.carrinho-item {
-  margin: 10px 0;
-}
-#carrinho, #botoes-produtos {
-  margin-top: 20px;
-}
-input {
-  padding: 8px;
-  margin: 5px;
-}
-h1, h2 {
-  text-align: center;
-}
+     font-family: Arial, sans-serif;
+     background: #f7faff;
+     padding: 20px;
+     max-width: 600px;
+     margin: auto;
+   }
+   h1 {
+     text-align: center;
+     color: #2b7a78;
+   }
+   input, button {
+     padding: 10px;
+     margin: 5px 0;
+     width: 100%;
+     box-sizing: border-box;
+   }
+   button {
+     background: #3aafa9;
+     color: white;
+     border: none;
+     cursor: pointer;
+     font-weight: bold;
+     border-radius: 5px;
+   }
+   button:hover {
+     background: #2b7a78;
+   }
+   .forma-pagamento button {
+     background: #ddd;
+     color: black;
+     border-radius: 8px;
+     margin: 5px 4px;
+   }
+   .forma-pagamento button.selecionado {
+     background: #38b000;
+     color: white;
+     border: 2px solid #2d8600;
+   }
+   .secao {
+     margin-bottom: 20px;
+   }
+   .secao div {
+     margin-bottom: 5px;
+   }
+   #carrinho div {
+     background: #eef;
+     padding: 5px;
+     border-radius: 5px;
+     margin-bottom: 5px;
+   }
+   .botoes-acao {
+     display: flex;
+     flex-direction: column;
+     gap: 10px;
+   }
