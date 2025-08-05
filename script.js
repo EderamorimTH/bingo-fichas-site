@@ -158,31 +158,26 @@ let produtos = [];
        return;
      }
      const totalElement = document.getElementById("total");
-     const recebidoInput = document.getElementById("valorRecebido");
-     const trocoElement = document.getElementById("troco");
-     if (!totalElement || !recebidoInput || !trocoElement) return;
+     if (!totalElement) return;
      const total = parseFloat(totalElement.textContent).toFixed(2);
-     const recebido = parseFloat(recebidoInput.value || 0).toFixed(2);
-     const trocoFinal = troco.toFixed(2);
      const { jsPDF } = window.jspdf;
-     const doc = new jsPDF();
-     doc.setFontSize(16);
-     doc.text("🎟️ FICHA DO BINGO 🎟️", 20, 20);
-     doc.setFontSize(12);
-     doc.text("Produtos:", 20, 30);
-     let y = 40;
-     carrinho.forEach(item => {
-       doc.text(`${item.qtd}x ${item.nome} - R$ ${item.preco.toFixed(2)}`, 20, y);
-       y += 8;
+     const doc = new jsPDF({
+       orientation: "portrait",
+       unit: "mm",
+       format: [50, 30] // 50mm x 30mm
      });
-     y += 4;
-     doc.line(20, y, 180, y); y += 8;
-     doc.text(`Pagamento: ${pagamentoSelecionado.toUpperCase()}`, 20, y); y += 8;
-     doc.text(`Total: R$ ${total}`, 20, y); y += 8;
-     doc.text(`Recebido: R$ ${recebido}`, 20, y); y += 8;
-     doc.text(`Troco: R$ ${trocoFinal}`, 20, y); y += 12;
-     doc.setFontSize(10);
-     doc.text("Obrigado por colaborar com o nosso bingo! 🎉", 20, y);
+     doc.setFontSize(14);
+     doc.text("Ficha do Bingo", 5, 5);
+     doc.setFontSize(12);
+     let y = 10;
+     carrinho.forEach(item => {
+       doc.text(`${item.qtd}x ${item.nome}`, 5, y);
+       y += 5;
+     });
+     doc.text(`Total: R$ ${total}`, 5, y);
+     y += 5;
+     doc.setFontSize(8);
+     doc.text("Obrigado por colaborar!", 5, y);
      doc.save("ficha.pdf");
    }
 
