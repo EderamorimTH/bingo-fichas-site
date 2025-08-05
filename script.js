@@ -157,28 +157,29 @@ let produtos = [];
        alert("Selecione uma forma de pagamento!");
        return;
      }
-     const totalElement = document.getElementById("total");
-     if (!totalElement) return;
-     const total = parseFloat(totalElement.textContent).toFixed(2);
      const { jsPDF } = window.jspdf;
      const doc = new jsPDF({
        orientation: "portrait",
        unit: "mm",
        format: [50, 30] // 50mm x 30mm
      });
-     doc.setFontSize(10); // Título menor
-     doc.text("Ficha do Bingo", 3, 4); // Margem reduzida
-     doc.setFontSize(8); // Conteúdo menor
-     let y = 8;
+     let pageAdded = false;
      carrinho.forEach(item => {
-       doc.text(`${item.qtd}x ${item.nome}`, 3, y);
-       y += 4; // Espaçamento reduzido
+       for (let i = 0; i < item.qtd; i++) {
+         if (pageAdded) {
+           doc.addPage([50, 30], "portrait");
+         }
+         doc.setFontSize(10);
+         doc.text("Ficha do Bingo", 3, 4);
+         doc.setFontSize(8);
+         doc.text(item.nome, 3, 8);
+         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 3, 12);
+         doc.setFontSize(6);
+         doc.text("Obrigado por colaborar!", 3, 16);
+         pageAdded = true;
+       }
      });
-     doc.text(`Total: R$ ${total}`, 3, y);
-     y += 4;
-     doc.setFontSize(6); // Agradecimento bem pequeno
-     doc.text("Obrigado por colaborar!", 3, y);
-     doc.save("ficha.pdf");
+     doc.save("fichas.pdf");
    }
 
    function abrirRelatorio() {
