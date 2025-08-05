@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.produto-btn, .carrinho-item button {
+  padding: 8px 12px;
+  margin: 5px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+.produto-btn:hover, .carrinho-item button:hover {
+  background-color: #45a049;
+}
+.carrinho-item {
+  margin: 10px 0;
+}
+#carrinho, #botoes-produtos {
+  margin-top: 20px;
+}
+input {
+  padding: 8px;
+  margin: 5px;
+}
+h1, h2 {
+  text-align: center;
+}
