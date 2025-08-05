@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sistema Bingo - Fichas</title>
+  <title>Sistema de Fichas - Bingo</title>
+
+  <!-- jsPDF para gerar PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -74,9 +78,9 @@
   </style>
 </head>
 <body>
-  <h1>🎟️ Bingo - Vendas de Fichas</h1>
+  <h1>🎟️ Bingo - Fichas</h1>
 
-  <!-- Seção: Adicionar Produto -->
+  <!-- Adicionar Produto -->
   <div class="secao">
     <h2>➕ Adicionar Produto</h2>
     <input type="text" id="nomeProduto" placeholder="Nome do produto">
@@ -112,11 +116,12 @@
   <!-- Ações -->
   <div class="secao botoes-acao">
     <button onclick="finalizarVenda()">✅ Finalizar Venda</button>
-    <button onclick="imprimirFichas()">🧾 Imprimir Ficha</button>
+    <button onclick="imprimirFichas()">🧾 Imprimir Ficha (PDF)</button>
     <button onclick="cancelarVenda()">❌ Cancelar Venda</button>
     <button onclick="abrirRelatorio()">📄 Relatório Final</button>
   </div>
 
+  <!-- script principal -->
   <script src="script.js"></script>
 </body>
 </html>
