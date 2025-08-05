@@ -166,18 +166,18 @@ let produtos = [];
        unit: "mm",
        format: [50, 30] // 50mm x 30mm
      });
-     doc.setFontSize(14);
-     doc.text("Ficha do Bingo", 5, 5);
-     doc.setFontSize(12);
-     let y = 10;
+     doc.setFontSize(10); // Título menor
+     doc.text("Ficha do Bingo", 3, 4); // Margem reduzida
+     doc.setFontSize(8); // Conteúdo menor
+     let y = 8;
      carrinho.forEach(item => {
-       doc.text(`${item.qtd}x ${item.nome}`, 5, y);
-       y += 5;
+       doc.text(`${item.qtd}x ${item.nome}`, 3, y);
+       y += 4; // Espaçamento reduzido
      });
-     doc.text(`Total: R$ ${total}`, 5, y);
-     y += 5;
-     doc.setFontSize(8);
-     doc.text("Obrigado por colaborar!", 5, y);
+     doc.text(`Total: R$ ${total}`, 3, y);
+     y += 4;
+     doc.setFontSize(6); // Agradecimento bem pequeno
+     doc.text("Obrigado por colaborar!", 3, y);
      doc.save("ficha.pdf");
    }
 
