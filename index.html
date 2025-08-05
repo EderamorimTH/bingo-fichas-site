@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sistema de Fichas - Bingo</title>
-  <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.legacy.min.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>🎟️ Bingo - Fichas</h1>
 
-  <!-- Adicionar Produto -->
+  <!-- Adicionar/Editar Produto -->
   <div class="secao">
-    <h2>➕ Adicionar Produto</h2>
+    <h2>➕ Adicionar/Editar Produto</h2>
     <input type="text" id="nomeProduto" placeholder="Nome do produto">
     <input type="number" id="precoProduto" placeholder="Preço (R$)" step="0.01">
     <button onclick="adicionarProduto()">Adicionar Produto</button>
@@ -45,7 +45,8 @@
 
   <!-- Ações -->
   <div class="secao botoes-acao">
-    <button onclick="finalizarVenda()">✅ Finalizar Venda (gera ficha)</button>
+    <button onclick="finalizarVenda()">✅ Finalizar Venda</button>
+    <button onclick="imprimirFichas()">🧾 Imprimir Ficha (PDF)</button>
     <button onclick="cancelarVenda()">❌ Cancelar Venda</button>
     <button onclick="abrirRelatorio()">📄 Relatório Final</button>
   </div>
