@@ -3,13 +3,14 @@ let produtos = [];
    let pagamentoSelecionado = "";
    let valorRecebido = 0;
    let troco = 0;
+   let editIndex = null; // Índice do produto sendo editado
 
    if (localStorage.getItem("produtos")) {
      produtos = JSON.parse(localStorage.getItem("produtos"));
      atualizarListaProdutos();
    }
 
-   function adicionarProduto() {
+   function adicionarOuEditarProduto() {
      const nomeInput = document.getElementById("nomeProduto");
      const precoInput = document.getElementById("precoProduto");
      if (!nomeInput || !precoInput) {
@@ -22,12 +23,33 @@ let produtos = [];
        alert("Preencha corretamente nome e preço.");
        return;
      }
-     const produto = { nome, preco };
-     produtos.push(produto);
+     if (editIndex !== null) {
+       // Editar produto existente
+       produtos[editIndex] = { nome, preco };
+       editIndex = null;
+     } else {
+       // Adicionar novo produto
+       produtos.push({ nome, preco });
+     }
      localStorage.setItem("produtos", JSON.stringify(produtos));
      atualizarListaProdutos();
      nomeInput.value = "";
      precoInput.value = "";
+   }
+
+   function editarProduto(index) {
+     const produto = produtos[index];
+     document.getElementById("nomeProduto").value = produto.nome;
+     document.getElementById("precoProduto").value = produto.preco;
+     editIndex = index;
+   }
+
+   function excluirProduto(index) {
+     if (confirm("Deseja excluir o produto " + produtos[index].nome + "?")) {
+       produtos.splice(index, 1);
+       localStorage.setItem("produtos", JSON.stringify(produtos));
+       atualizarListaProdutos();
+     }
    }
 
    function atualizarListaProdutos() {
@@ -38,6 +60,8 @@ let produtos = [];
        const item = document.createElement("div");
        item.innerHTML = `
          <button onclick="adicionarAoCarrinho(${i})">${p.nome} - R$${p.preco.toFixed(2)}</button>
+         <button class="edit-btn" onclick="editarProduto(${i})">✏️</button>
+         <button class="delete-btn" onclick="excluirProduto(${i})">🗑</button>
        `;
        lista.appendChild(item);
      });
@@ -169,13 +193,13 @@ let produtos = [];
          if (pageAdded) {
            doc.addPage([50, 30], "portrait");
          }
-         doc.setFontSize(10);
-         doc.text("Ficha do Bingo", 3, 4);
-         doc.setFontSize(8);
-         doc.text(item.nome, 3, 8);
-         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 3, 12);
-         doc.setFontSize(6);
-         doc.text("Obrigado por colaborar!", 3, 16);
+         doc.setFontSize(9);
+         doc.text("Ficha do Bingo", 25, 3, { align: "center" });
+         doc.setFontSize(7);
+         doc.text(item.nome, 25, 7, { align: "center" });
+         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 25, 11, { align: "center" });
+         doc.setFontSize(5);
+         doc.text("Obrigado por colaborar!", 25, 15, { align: "center" });
          pageAdded = true;
        }
      });
