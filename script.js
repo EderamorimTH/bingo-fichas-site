@@ -82,7 +82,7 @@ async function imprimirFichas() {
   const valorRecebido = parseFloat(document.getElementById("valor-recebido").value);
   const troco = parseFloat(document.getElementById("troco").textContent);
 
-  await fetch("https://SEU_BACKEND_URL.onrender.com/vender", {
+  await fetch("https://bingo-fichas-backend.onrender.com/vender", { ...
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ carrinho, pagamentoSelecionado, total, valorRecebido, troco })
@@ -102,5 +102,5 @@ function cancelarVenda() {
 }
 
 function gerarRelatorio() {
-  window.open("https://SEU_BACKEND_URL.onrender.com/relatorio", "_blank");
+  window.open("https://bingo-fichas-backend.onrender.com/relatorio", "_blank");
 }
