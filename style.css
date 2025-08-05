@@ -1,81 +1,157 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f7faff;
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
+let produtos = [];
+let carrinho = [];
+let pagamentoSelecionado = "";
+let troco = 0;
+
+if (localStorage.getItem("produtos")) {
+  produtos = JSON.parse(localStorage.getItem("produtos"));
+  atualizarListaProdutos();
 }
-h1 {
-  text-align: center;
-  color: #2b7a78;
+
+function adicionarProduto() {
+  const nome = document.getElementById("nomeProduto").value;
+  const preco = parseFloat(document.getElementById("precoProduto").value);
+
+  if (!nome || isNaN(preco)) {
+    alert("Preencha nome e preço corretamente.");
+    return;
+  }
+
+  const produto = { nome, preco };
+  produtos.push(produto);
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  atualizarListaProdutos();
+
+  document.getElementById("nomeProduto").value = "";
+  document.getElementById("precoProduto").value = "";
 }
-input, button {
-  padding: 10px;
-  margin: 5px 0;
-  width: 100%;
-  box-sizing: border-box;
+
+function atualizarListaProdutos() {
+  const lista = document.getElementById("listaProdutos");
+  lista.innerHTML = "";
+
+  produtos.forEach((p, i) => {
+    const item = document.createElement("div");
+    item.innerHTML = `
+      <button onclick="adicionarAoCarrinho(${i})">${p.nome} - R$${p.preco.toFixed(2)}</button>
+    `;
+    lista.appendChild(item);
+  });
 }
-button {
-  background: #3aafa9;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 5px;
+
+function adicionarAoCarrinho(index) {
+  const existente = carrinho.find(item => item.nome === produtos[index].nome);
+  if (existente) {
+    existente.qtd++;
+  } else {
+    carrinho.push({ ...produtos[index], qtd: 1 });
+  }
+  atualizarCarrinho();
 }
-button:hover {
-  background: #2b7a78;
+
+function atualizarCarrinho() {
+  const lista = document.getElementById("carrinho");
+  lista.innerHTML = "";
+
+  carrinho.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      ${item.qtd}x ${item.nome} - R$${(item.qtd * item.preco).toFixed(2)}
+      <button onclick="editarQtd(${i}, 1)">+</button>
+      <button onclick="editarQtd(${i}, -1)">-</button>
+      <button onclick="removerItem(${i})">🗑</button>
+    `;
+    lista.appendChild(div);
+  });
+
+  const total = carrinho.reduce((s, item) => s + item.qtd * item.preco, 0);
+  document.getElementById("total").textContent = total.toFixed(2);
+  calcularTroco();
 }
-.forma-pagamento button {
-  background: #ddd;
-  color: black;
-  border-radius: 8px;
-  margin: 5px 4px;
+
+function editarQtd(index, delta) {
+  carrinho[index].qtd += delta;
+  if (carrinho[index].qtd <= 0) {
+    carrinho.splice(index, 1);
+  }
+  atualizarCarrinho();
 }
-.forma-pagamento button.selecionado {
-  background: #38b000;
-  color: white;
-  border: 2px solid #2d8600;
+
+function removerItem(index) {
+  carrinho.splice(index, 1);
+  atualizarCarrinho();
 }
-.secao {
-  margin-bottom: 20px;
+
+function cancelarVenda() {
+  carrinho = [];
+  pagamentoSelecionado = "";
+  document.getElementById("total").textContent = "0.00";
+  document.getElementById("valorRecebido").value = "";
+  document.getElementById("troco").textContent = "0.00";
+  document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
+  atualizarCarrinho();
 }
-.secao div {
-  margin-bottom: 5px;
+
+function selecionarPagamento(forma) {
+  pagamentoSelecionado = forma;
+  document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
+  document.getElementById(`btn-${forma}`).classList.add("selecionado");
 }
-#carrinho div {
-  background: #eef;
-  padding: 5px;
-  border-radius: 5px;
-  margin-bottom: 5px;
+
+function calcularTroco() {
+  const total = parseFloat(document.getElementById("total").textContent);
+  const recebido = parseFloat(document.getElementById("valorRecebido").value);
+
+  if (!isNaN(recebido)) {
+    troco = recebido - total;
+    document.getElementById("troco").textContent = troco.toFixed(2);
+  }
 }
-#listaProdutos div {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+
+function imprimirFichas() {
+  const total = parseFloat(document.getElementById("total").textContent).toFixed(2);
+  const recebido = parseFloat(document.getElementById("valorRecebido").value || 0).toFixed(2);
+  const trocoFinal = troco.toFixed(2);
+
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: [50, 30]
+  });
+
+  doc.setFontSize(8);
+  doc.text("🎟️ FICHA DO BINGO 🎟️", 5, 7);
+
+  let y = 12;
+  carrinho.forEach(item => {
+    doc.text(`${item.qtd}x ${item.nome}`, 5, y);
+    y += 4;
+  });
+
+  doc.text(`Pagamento: ${pagamentoSelecionado}`, 5, y); y += 4;
+  doc.text(`Total: R$ ${total}`, 5, y); y += 4;
+  doc.text(`Recebido: R$ ${recebido}`, 5, y); y += 4;
+  doc.text(`Troco: R$ ${trocoFinal}`, 5, y); y += 4;
+
+  doc.save("ficha.pdf");
 }
-#listaProdutos button {
-  flex: 1;
+
+function finalizarVenda() {
+  if (carrinho.length === 0 || !pagamentoSelecionado) {
+    alert("Preencha todos os dados.");
+    return;
+  }
+
+  imprimirFichas(); // gera o PDF automaticamente
+  alert("Venda registrada!");
+  cancelarVenda();
 }
-.edit-btn, .delete-btn {
-  width: auto;
-  padding: 5px;
-  font-size: 12px;
-}
-.edit-btn {
-  background: #ff9800;
-}
-.edit-btn:hover {
-  background: #e68900;
-}
-.delete-btn {
-  background: #f44336;
-}
-.delete-btn:hover {
-  background: #d32f2f;
-}
-.botoes-acao {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+
+function abrirRelatorio() {
+  let relatorio = "📋 RELATÓRIO DE VENDAS\n\n";
+  carrinho.forEach(item => {
+    relatorio += `${item.qtd}x ${item.nome} - R$ ${(item.qtd * item.preco).toFixed(2)}\n`;
+  });
+  relatorio += `\nTotal: R$ ${parseFloat(document.getElementById("total").textContent).toFixed(2)}`;
+  alert(relatorio);
 }
