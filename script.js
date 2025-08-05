@@ -1,32 +1,49 @@
 let produtos = [];
 let carrinho = [];
 let pagamentoSelecionado = "";
+let valorRecebido = 0;
+let troco = 0;
 
-function adicionarProduto() {
-  const nome = document.getElementById("nome").value.trim();
-  const preco = parseFloat(document.getElementById("preco").value);
-  if (nome && preco > 0) {
-    produtos.push({ nome, preco });
-    atualizarBotoes();
-    document.getElementById("nome").value = "";
-    document.getElementById("preco").value = "";
-  } else {
-    alert("Digite um nome e um preço válido!");
-  }
+// Carregar produtos salvos (se houver)
+if (localStorage.getItem("produtos")) {
+  produtos = JSON.parse(localStorage.getItem("produtos"));
+  atualizarListaProdutos();
 }
 
-function atualizarBotoes() {
-  const container = document.getElementById("botoes-produtos");
-  container.innerHTML = "";
+// Adicionar novo produto
+function adicionarProduto() {
+  const nome = document.getElementById("nomeProduto").value;
+  const preco = parseFloat(document.getElementById("precoProduto").value);
+
+  if (!nome || isNaN(preco)) {
+    alert("Preencha corretamente nome e preço.");
+    return;
+  }
+
+  const produto = { nome, preco };
+  produtos.push(produto);
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  atualizarListaProdutos();
+
+  document.getElementById("nomeProduto").value = "";
+  document.getElementById("precoProduto").value = "";
+}
+
+// Atualiza lista de produtos na tela
+function atualizarListaProdutos() {
+  const lista = document.getElementById("listaProdutos");
+  lista.innerHTML = "";
+
   produtos.forEach((p, i) => {
-    const btn = document.createElement("button");
-    btn.textContent = `${p.nome} - R$ ${p.preco.toFixed(2)}`;
-    btn.className = "produto-btn";
-    btn.onclick = () => adicionarAoCarrinho(i);
-    container.appendChild(btn);
+    const item = document.createElement("div");
+    item.innerHTML = `
+      <button onclick="adicionarAoCarrinho(${i})">${p.nome} - R$${p.preco.toFixed(2)}</button>
+    `;
+    lista.appendChild(item);
   });
 }
 
+// Adiciona produto ao carrinho
 function adicionarAoCarrinho(index) {
   const existente = carrinho.find(item => item.nome === produtos[index].nome);
   if (existente) {
@@ -37,49 +54,108 @@ function adicionarAoCarrinho(index) {
   atualizarCarrinho();
 }
 
+// Atualiza exibição do carrinho
 function atualizarCarrinho() {
-  const container = document.getElementById("carrinho");
-  container.innerHTML = "";
-  let total = 0;
+  const lista = document.getElementById("carrinho");
+  lista.innerHTML = "";
+
   carrinho.forEach((item, i) => {
-    total += item.qtd * item.preco;
     const div = document.createElement("div");
-    div.className = "carrinho-item";
-    div.innerHTML = `${item.nome} - R$${item.preco.toFixed(2)} x ${item.qtd}
-      <button onclick="alterarQtd(${i}, 1)">+</button>
-      <button onclick="alterarQtd(${i}, -1)">-</button>
-      <button onclick="removerItem(${i})">x</button>`;
-    container.appendChild(div);
+    div.innerHTML = `
+      ${item.qtd}x ${item.nome} - R$${(item.qtd * item.preco).toFixed(2)}
+      <button onclick="editarQtd(${i}, 1)">+</button>
+      <button onclick="editarQtd(${i}, -1)">-</button>
+      <button onclick="removerItem(${i})">🗑</button>
+    `;
+    lista.appendChild(div);
   });
+
+  const total = carrinho.reduce((s, item) => s + item.qtd * item.preco, 0);
   document.getElementById("total").textContent = total.toFixed(2);
-  calcularTroco();
+
+  calcularTroco(); // Atualiza o troco
 }
 
-function alterarQtd(i, delta) {
-  carrinho[i].qtd += delta;
-  if (carrinho[i].qtd <= 0) carrinho.splice(i, 1);
+// Editar quantidade de item no carrinho
+function editarQtd(index, delta) {
+  carrinho[index].qtd += delta;
+  if (carrinho[index].qtd <= 0) {
+    carrinho.splice(index, 1);
+  }
   atualizarCarrinho();
 }
 
-function removerItem(i) {
-  carrinho.splice(i, 1);
+// Remover item do carrinho
+function removerItem(index) {
+  carrinho.splice(index, 1);
   atualizarCarrinho();
 }
 
-function setPagamento(tipo) {
-  pagamentoSelecionado = tipo;
-  document.getElementById("pagamento").textContent = tipo;
+// Cancelar toda a venda
+function cancelarVenda() {
+  carrinho = [];
+  pagamentoSelecionado = "";
+  document.getElementById("total").textContent = "0.00";
+  document.getElementById("valorRecebido").value = "";
+  document.getElementById("troco").textContent = "0.00";
+  document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
+  atualizarCarrinho();
 }
 
+// Seleciona forma de pagamento
+function selecionarPagamento(forma) {
+  pagamentoSelecionado = forma;
+  document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
+  document.getElementById(`btn-${forma}`).classList.add("selecionado");
+}
+
+// Calcular troco
 function calcularTroco() {
-  const recebido = parseFloat(document.getElementById("valor-recebido").value || 0);
   const total = parseFloat(document.getElementById("total").textContent);
-  const troco = recebido - total;
-  document.getElementById("troco").textContent = troco >= 0 ? troco.toFixed(2) : "0.00";
+  valorRecebido = parseFloat(document.getElementById("valorRecebido").value);
+
+  if (!isNaN(valorRecebido)) {
+    troco = valorRecebido - total;
+    document.getElementById("troco").textContent = troco.toFixed(2);
+  }
 }
 
+// Finalizar venda e enviar para backend
+async function finalizarVenda() {
+  if (carrinho.length === 0 || !pagamentoSelecionado) {
+    alert("Preencha todos os dados da venda.");
+    return;
+  }
+
+  const total = parseFloat(document.getElementById("total").textContent);
+
+  try {
+    await fetch("https://bingo-fichas-site.onrender.com/vender", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        carrinho,
+        pagamento: pagamentoSelecionado,
+        total,
+        valorRecebido,
+        troco
+      })
+    });
+
+    alert("Venda registrada com sucesso!");
+    cancelarVenda();
+  } catch (e) {
+    alert("Erro ao registrar venda.");
+    console.error(e);
+  }
+}
+
+// Imprimir ficha (RawBT ou similar)
 function imprimirFichas() {
-  if (carrinho.length === 0) return alert("Carrinho vazio!");
+  if (carrinho.length === 0) {
+    alert("Carrinho vazio!");
+    return;
+  }
 
   let texto = "🎟️ FICHA DO BINGO 🎟️\n";
   texto += "=====================\n";
@@ -98,11 +174,10 @@ function imprimirFichas() {
   a.download = "ficha.txt";
   a.click();
 
-  alert("Ficha gerada! Agora abra com RawBT para imprimir.");
+  alert("Ficha gerada! Agora abra com o app RawBT para imprimir.");
 }
 
-}
-
-function gerarRelatorio() {
+// Abrir relatório
+function abrirRelatorio() {
   window.open("https://bingo-fichas-site.onrender.com/relatorio", "_blank");
 }
