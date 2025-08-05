@@ -4,13 +4,11 @@ let pagamentoSelecionado = "";
 let valorRecebido = 0;
 let troco = 0;
 
-// Carregar produtos salvos (se houver)
 if (localStorage.getItem("produtos")) {
   produtos = JSON.parse(localStorage.getItem("produtos"));
   atualizarListaProdutos();
 }
 
-// Adicionar novo produto
 function adicionarProduto() {
   const nome = document.getElementById("nomeProduto").value;
   const preco = parseFloat(document.getElementById("precoProduto").value);
@@ -29,7 +27,6 @@ function adicionarProduto() {
   document.getElementById("precoProduto").value = "";
 }
 
-// Atualiza lista de produtos na tela
 function atualizarListaProdutos() {
   const lista = document.getElementById("listaProdutos");
   lista.innerHTML = "";
@@ -43,7 +40,6 @@ function atualizarListaProdutos() {
   });
 }
 
-// Adiciona produto ao carrinho
 function adicionarAoCarrinho(index) {
   const existente = carrinho.find(item => item.nome === produtos[index].nome);
   if (existente) {
@@ -54,7 +50,6 @@ function adicionarAoCarrinho(index) {
   atualizarCarrinho();
 }
 
-// Atualiza exibição do carrinho
 function atualizarCarrinho() {
   const lista = document.getElementById("carrinho");
   lista.innerHTML = "";
@@ -73,10 +68,9 @@ function atualizarCarrinho() {
   const total = carrinho.reduce((s, item) => s + item.qtd * item.preco, 0);
   document.getElementById("total").textContent = total.toFixed(2);
 
-  calcularTroco(); // Atualiza o troco
+  calcularTroco();
 }
 
-// Editar quantidade de item no carrinho
 function editarQtd(index, delta) {
   carrinho[index].qtd += delta;
   if (carrinho[index].qtd <= 0) {
@@ -85,13 +79,11 @@ function editarQtd(index, delta) {
   atualizarCarrinho();
 }
 
-// Remover item do carrinho
 function removerItem(index) {
   carrinho.splice(index, 1);
   atualizarCarrinho();
 }
 
-// Cancelar toda a venda
 function cancelarVenda() {
   carrinho = [];
   pagamentoSelecionado = "";
@@ -102,14 +94,12 @@ function cancelarVenda() {
   atualizarCarrinho();
 }
 
-// Seleciona forma de pagamento
 function selecionarPagamento(forma) {
   pagamentoSelecionado = forma;
   document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
   document.getElementById(`btn-${forma}`).classList.add("selecionado");
 }
 
-// Calcular troco
 function calcularTroco() {
   const total = parseFloat(document.getElementById("total").textContent);
   valorRecebido = parseFloat(document.getElementById("valorRecebido").value);
@@ -120,7 +110,6 @@ function calcularTroco() {
   }
 }
 
-// Finalizar venda e enviar para backend
 async function finalizarVenda() {
   if (carrinho.length === 0 || !pagamentoSelecionado) {
     alert("Preencha todos os dados da venda.");
@@ -150,31 +139,41 @@ async function finalizarVenda() {
   }
 }
 
-// Imprimir ficha (RawBT ou similar)
+// 🧾 GERAR FICHA EM PDF
 function imprimirFichas() {
   if (carrinho.length === 0) {
     alert("Carrinho vazio!");
     return;
   }
 
-  let texto = "🎟️ FICHA DO BINGO 🎟️\n";
-  texto += "=====================\n";
+  const total = parseFloat(document.getElementById("total").textContent).toFixed(2);
+  const recebido = parseFloat(document.getElementById("valorRecebido").value || 0).toFixed(2);
+  const trocoFinal = troco.toFixed(2);
+
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("🎟️ FICHA DO BINGO 🎟️", 20, 20);
+
+  doc.setFontSize(12);
+  doc.text("Produtos:", 20, 30);
+
+  let y = 40;
   carrinho.forEach(item => {
-    texto += `${item.qtd}x ${item.nome} - R$${item.preco.toFixed(2)}\n`;
+    doc.text(`${item.qtd}x ${item.nome} - R$ ${item.preco.toFixed(2)}`, 20, y);
+    y += 8;
   });
-  texto += "---------------------\n";
-  texto += `Pagamento: ${pagamentoSelecionado}\n`;
-  texto += `Total: R$ ${parseFloat(document.getElementById("total").textContent).toFixed(2)}\n`;
 
-  const blob = new Blob([texto], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
+  y += 4;
+  doc.line(20, y, 180, y); y += 8;
+  doc.text(`Pagamento: ${pagamentoSelecionado.toUpperCase()}`, 20, y); y += 8;
+  doc.text(`Total: R$ ${total}`, 20, y); y += 8;
+  doc.text(`Recebido: R$ ${recebido}`, 20, y); y += 8;
+  doc.text(`Troco: R$ ${trocoFinal}`, 20, y); y += 12;
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "ficha.txt";
-  a.click();
+  doc.setFontSize(10);
+  doc.text("Obrigado por colaborar com o nosso bingo! 🎉", 20, y);
 
-  alert("Ficha gerada! Agora abra com o app RawBT para imprimir.");
+  doc.save("ficha.pdf");
 }
 
 // Abrir relatório
