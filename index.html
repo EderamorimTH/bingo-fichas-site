@@ -58,6 +58,31 @@
          border-radius: 5px;
          margin-bottom: 5px;
        }
+       #listaProdutos div {
+         display: flex;
+         align-items: center;
+         gap: 5px;
+       }
+       #listaProdutos button {
+         flex: 1;
+       }
+       .edit-btn, .delete-btn {
+         width: auto;
+         padding: 5px;
+         font-size: 12px;
+       }
+       .edit-btn {
+         background: #ff9800;
+       }
+       .edit-btn:hover {
+         background: #e68900;
+       }
+       .delete-btn {
+         background: #f44336;
+       }
+       .delete-btn:hover {
+         background: #d32f2f;
+       }
        .botoes-acao {
          display: flex;
          flex-direction: column;
@@ -67,12 +92,12 @@
    </head>
    <body>
      <h1>🎟️ Bingo - Fichas</h1>
-     <!-- Adicionar Produto -->
+     <!-- Adicionar/Editar Produto -->
      <div class="secao">
-       <h2>➕ Adicionar Produto</h2>
+       <h2>➕ Adicionar/Editar Produto</h2>
        <input type="text" id="nomeProduto" placeholder="Nome do produto">
        <input type="number" id="precoProduto" placeholder="Preço (R$)" step="0.01">
-       <button onclick="adicionarProduto()">Adicionar Produto</button>
+       <button onclick="adicionarOuEditarProduto()">Adicionar/Editar Produto</button>
      </div>
      <!-- Lista de Produtos -->
      <div class="secao">
