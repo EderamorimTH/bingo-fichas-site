@@ -1,134 +1,58 @@
 <!DOCTYPE html>
-   <html lang="pt-BR">
-   <head>
-     <meta charset="UTF-8" />
-     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-     <title>Sistema de Fichas - Bingo</title>
-     <!-- Carregar jsPDF primeiro -->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-     <style>
-       body {
-         font-family: Arial, sans-serif;
-         background: #f7faff;
-         padding: 20px;
-         max-width: 600px;
-         margin: auto;
-       }
-       h1 {
-         text-align: center;
-         color: #2b7a78;
-       }
-       input, button {
-         padding: 10px;
-         margin: 5px 0;
-         width: 100%;
-         box-sizing: border-box;
-       }
-       button {
-         background: #3aafa9;
-         color: white;
-         border: none;
-         cursor: pointer;
-         font-weight: bold;
-         border-radius: 5px;
-       }
-       button:hover {
-         background: #2b7a78;
-       }
-       .forma-pagamento button {
-         background: #ddd;
-         color: black;
-         border-radius: 8px;
-         margin: 5px 4px;
-       }
-       .forma-pagamento button.selecionado {
-         background: #38b000;
-         color: white;
-         border: 2px solid #2d8600;
-       }
-       .secao {
-         margin-bottom: 20px;
-       }
-       .secao div {
-         margin-bottom: 5px;
-       }
-       #carrinho div {
-         background: #eef;
-         padding: 5px;
-         border-radius: 5px;
-         margin-bottom: 5px;
-       }
-       #listaProdutos div {
-         display: flex;
-         align-items: center;
-         gap: 5px;
-       }
-       #listaProdutos button {
-         flex: 1;
-       }
-       .edit-btn, .delete-btn {
-         width: auto;
-         padding: 5px;
-         font-size: 12px;
-       }
-       .edit-btn {
-         background: #ff9800;
-       }
-       .edit-btn:hover {
-         background: #e68900;
-       }
-       .delete-btn {
-         background: #f44336;
-       }
-       .delete-btn:hover {
-         background: #d32f2f;
-       }
-       .botoes-acao {
-         display: flex;
-         flex-direction: column;
-         gap: 10px;
-       }
-     </style>
-   </head>
-   <body>
-     <h1>🎟️ Bingo - Fichas</h1>
-     <!-- Adicionar/Editar Produto -->
-     <div class="secao">
-       <h2>➕ Adicionar/Editar Produto</h2>
-       <input type="text" id="nomeProduto" placeholder="Nome do produto">
-       <input type="number" id="precoProduto" placeholder="Preço (R$)" step="0.01">
-       <button onclick="adicionarOuEditarProduto()">Adicionar/Editar Produto</button>
-     </div>
-     <!-- Lista de Produtos -->
-     <div class="secao">
-       <h2>📦 Produtos</h2>
-       <div id="listaProdutos"></div>
-     </div>
-     <!-- Carrinho -->
-     <div class="secao">
-       <h2>🛒 Carrinho</h2>
-       <div id="carrinho"></div>
-       <div><strong>Total:</strong> R$ <span id="total">0.00</span></div>
-     </div>
-     <!-- Pagamento -->
-     <div class="secao">
-       <h2>💳 Forma de Pagamento</h2>
-       <div class="forma-pagamento">
-         <button id="btn-dinheiro" onclick="selecionarPagamento('dinheiro')">Dinheiro</button>
-         <button id="btn-pix" onclick="selecionarPagamento('pix')">PIX</button>
-         <button id="btn-credito" onclick="selecionarPagamento('credito')">Crédito</button>
-       </div>
-       <input type="number" id="valorRecebido" placeholder="Valor recebido" step="0.01" oninput="calcularTroco()">
-       <div><strong>Troco:</strong> R$ <span id="troco">0.00</span></div>
-     </div>
-     <!-- Ações -->
-     <div class="secao botoes-acao">
-       <button onclick="finalizarVenda()">✅ Finalizar Venda</button>
-       <button onclick="imprimirFichas()">🧾 Imprimir Ficha (PDF)</button>
-       <button onclick="cancelarVenda()">❌ Cancelar Venda</button>
-       <button onclick="abrirRelatorio()">📄 Relatório Final</button>
-     </div>
-     <!-- Carregar script principal no final -->
-     <script src="script.js"></script>
-   </body>
-   </html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Fichas - Bingo</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- jsPDF versão legacy para funcionar direto -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.legacy.min.js"></script>
+</head>
+<body>
+  <h1>🎟️ Bingo - Fichas</h1>
+
+  <!-- Adicionar Produto -->
+  <div class="secao">
+    <h2>➕ Adicionar Produto</h2>
+    <input type="text" id="nomeProduto" placeholder="Nome do produto">
+    <input type="number" id="precoProduto" placeholder="Preço (R$)" step="0.01">
+    <button onclick="adicionarProduto()">Adicionar Produto</button>
+  </div>
+
+  <!-- Lista de Produtos -->
+  <div class="secao">
+    <h2>📦 Produtos</h2>
+    <div id="listaProdutos"></div>
+  </div>
+
+  <!-- Carrinho -->
+  <div class="secao">
+    <h2>🛒 Carrinho</h2>
+    <div id="carrinho"></div>
+    <div><strong>Total:</strong> R$ <span id="total">0.00</span></div>
+  </div>
+
+  <!-- Pagamento -->
+  <div class="secao">
+    <h2>💳 Forma de Pagamento</h2>
+    <div class="forma-pagamento">
+      <button id="btn-dinheiro" onclick="selecionarPagamento('dinheiro')">Dinheiro</button>
+      <button id="btn-pix" onclick="selecionarPagamento('pix')">PIX</button>
+      <button id="btn-credito" onclick="selecionarPagamento('credito')">Crédito</button>
+    </div>
+    <input type="number" id="valorRecebido" placeholder="Valor recebido" step="0.01" oninput="calcularTroco()">
+    <div><strong>Troco:</strong> R$ <span id="troco">0.00</span></div>
+  </div>
+
+  <!-- Ações -->
+  <div class="secao botoes-acao">
+    <button onclick="finalizarVenda()">✅ Finalizar Venda</button>
+    <button onclick="imprimirFichas()">🧾 Imprimir Ficha (PDF)</button>
+    <button onclick="cancelarVenda()">❌ Cancelar Venda</button>
+  </div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
