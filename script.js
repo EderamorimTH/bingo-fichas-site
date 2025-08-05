@@ -3,7 +3,7 @@ let produtos = [];
    let pagamentoSelecionado = "";
    let valorRecebido = 0;
    let troco = 0;
-   let editIndex = null; // Índice do produto sendo editado
+   let editIndex = null;
 
    if (localStorage.getItem("produtos")) {
      produtos = JSON.parse(localStorage.getItem("produtos"));
@@ -24,11 +24,9 @@ let produtos = [];
        return;
      }
      if (editIndex !== null) {
-       // Editar produto existente
        produtos[editIndex] = { nome, preco };
        editIndex = null;
      } else {
-       // Adicionar novo produto
        produtos.push({ nome, preco });
      }
      localStorage.setItem("produtos", JSON.stringify(produtos));
@@ -185,7 +183,7 @@ let produtos = [];
      const doc = new jsPDF({
        orientation: "portrait",
        unit: "mm",
-       format: [50, 30] // 50mm x 30mm
+       format: [50, 30]
      });
      let pageAdded = false;
      carrinho.forEach(item => {
@@ -193,13 +191,13 @@ let produtos = [];
          if (pageAdded) {
            doc.addPage([50, 30], "portrait");
          }
-         doc.setFontSize(9);
+         doc.setFontSize(8);
          doc.text("Ficha do Bingo", 25, 3, { align: "center" });
-         doc.setFontSize(7);
-         doc.text(item.nome, 25, 7, { align: "center" });
-         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 25, 11, { align: "center" });
-         doc.setFontSize(5);
-         doc.text("Obrigado por colaborar!", 25, 15, { align: "center" });
+         doc.setFontSize(6);
+         doc.text(item.nome, 25, 8, { align: "center" });
+         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 25, 13, { align: "center" });
+         doc.setFontSize(4);
+         doc.text("Obrigado por colaborar!", 25, 18, { align: "center" });
          pageAdded = true;
        }
      });
