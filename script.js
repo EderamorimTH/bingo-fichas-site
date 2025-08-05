@@ -191,13 +191,15 @@ let produtos = [];
          if (pageAdded) {
            doc.addPage([50, 30], "portrait");
          }
-         doc.setFontSize(8);
-         doc.text("Ficha do Bingo", 25, 3, { align: "center" });
-         doc.setFontSize(6);
-         doc.text(item.nome, 25, 8, { align: "center" });
-         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 25, 13, { align: "center" });
-         doc.setFontSize(4);
-         doc.text("Obrigado por colaborar!", 25, 18, { align: "center" });
+         doc.setFontSize(7);
+         doc.text("Ficha do Bingo", 25, 3, { align: "center", maxWidth: 44 });
+         doc.setFontSize(5);
+         doc.text(item.nome, 25, 7, { align: "center", maxWidth: 44 });
+         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 25, 11, { align: "center", maxWidth: 44 });
+         doc.setFontSize(3);
+         doc.text("Obrigado por colaborar!", 25, 15, { align: "center", maxWidth: 44 });
+         doc.setFontSize(5);
+         doc.text("------", 25, 18, { align: "center" });
          pageAdded = true;
        }
      });
