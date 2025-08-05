@@ -49,6 +49,31 @@ body {
      border-radius: 5px;
      margin-bottom: 5px;
    }
+   #listaProdutos div {
+     display: flex;
+     align-items: center;
+     gap: 5px;
+   }
+   #listaProdutos button {
+     flex: 1;
+   }
+   .edit-btn, .delete-btn {
+     width: auto;
+     padding: 5px;
+     font-size: 12px;
+   }
+   .edit-btn {
+     background: #ff9800;
+   }
+   .edit-btn:hover {
+     background: #e68900;
+   }
+   .delete-btn {
+     background: #f44336;
+   }
+   .delete-btn:hover {
+     background: #d32f2f;
+   }
    .botoes-acao {
      display: flex;
      flex-direction: column;
