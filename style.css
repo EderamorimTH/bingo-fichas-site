@@ -1,81 +1,81 @@
 body {
-     font-family: Arial, sans-serif;
-     background: #f7faff;
-     padding: 20px;
-     max-width: 600px;
-     margin: auto;
-   }
-   h1 {
-     text-align: center;
-     color: #2b7a78;
-   }
-   input, button {
-     padding: 10px;
-     margin: 5px 0;
-     width: 100%;
-     box-sizing: border-box;
-   }
-   button {
-     background: #3aafa9;
-     color: white;
-     border: none;
-     cursor: pointer;
-     font-weight: bold;
-     border-radius: 5px;
-   }
-   button:hover {
-     background: #2b7a78;
-   }
-   .forma-pagamento button {
-     background: #ddd;
-     color: black;
-     border-radius: 8px;
-     margin: 5px 4px;
-   }
-   .forma-pagamento button.selecionado {
-     background: #38b000;
-     color: white;
-     border: 2px solid #2d8600;
-   }
-   .secao {
-     margin-bottom: 20px;
-   }
-   .secao div {
-     margin-bottom: 5px;
-   }
-   #carrinho div {
-     background: #eef;
-     padding: 5px;
-     border-radius: 5px;
-     margin-bottom: 5px;
-   }
-   #listaProdutos div {
-     display: flex;
-     align-items: center;
-     gap: 5px;
-   }
-   #listaProdutos button {
-     flex: 1;
-   }
-   .edit-btn, .delete-btn {
-     width: auto;
-     padding: 5px;
-     font-size: 12px;
-   }
-   .edit-btn {
-     background: #ff9800;
-   }
-   .edit-btn:hover {
-     background: #e68900;
-   }
-   .delete-btn {
-     background: #f44336;
-   }
-   .delete-btn:hover {
-     background: #d32f2f;
-   }
-   .botoes-acao {
-     display: flex;
-     flex-direction: column;
-     gap: 10px;
-   }
+  font-family: Arial, sans-serif;
+  background: #f7faff;
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+h1 {
+  text-align: center;
+  color: #2b7a78;
+}
+input, button {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+button {
+  background: #3aafa9;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+button:hover {
+  background: #2b7a78;
+}
+.forma-pagamento button {
+  background: #ddd;
+  color: black;
+  border-radius: 8px;
+  margin: 5px 4px;
+}
+.forma-pagamento button.selecionado {
+  background: #38b000;
+  color: white;
+  border: 2px solid #2d8600;
+}
+.secao {
+  margin-bottom: 20px;
+}
+.secao div {
+  margin-bottom: 5px;
+}
+#carrinho div {
+  background: #eef;
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+#listaProdutos div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#listaProdutos button {
+  flex: 1;
+}
+.edit-btn, .delete-btn {
+  width: auto;
+  padding: 5px;
+  font-size: 12px;
+}
+.edit-btn {
+  background: #ff9800;
+}
+.edit-btn:hover {
+  background: #e68900;
+}
+.delete-btn {
+  background: #f44336;
+}
+.delete-btn:hover {
+  background: #d32f2f;
+}
+.botoes-acao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
