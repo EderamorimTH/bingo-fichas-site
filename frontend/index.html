@@ -1,73 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Fichas - Bingo</title>
-  <script defer src="script.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #fff8e7;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 { color: #d43f8d; }
-    .produto-btn, .pagamento-btn {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #ffd166;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .carrinho-item {
-      margin: 5px;
-      font-size: 16px;
-    }
-    .painel {
-      margin: 20px auto;
-      max-width: 400px;
-      background: #fff;
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Beneficente</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🎉 Bingo Beneficente 🎉</h1>
-
-  <div class="painel">
-    <h3>➕ Adicionar Produto</h3>
-    <input type="text" id="nome" placeholder="Nome do produto" />
-    <input type="number" id="preco" placeholder="Preço" />
+    <h1>🎉 Bingo Beneficente 🎉</h1>
+    <h2>➕ Adicionar Produto</h2>
+    <input type="text" id="nome" placeholder="Nome do produto">
+    <input type="number" id="preco" placeholder="Preço">
     <button onclick="adicionarProduto()">Adicionar</button>
-  </div>
-
-  <div class="painel">
-    <h3>🛍️ Produtos</h3>
+    <h2>🛍️ Produtos</h2>
     <div id="botoes-produtos"></div>
-  </div>
-
-  <div class="painel">
-    <h3>🛒 Carrinho</h3>
+    <h2>🛒 Carrinho</h2>
     <div id="carrinho"></div>
     <p>Total: R$ <span id="total">0.00</span></p>
-    <input type="number" id="valor-recebido" placeholder="Valor recebido" oninput="calcularTroco()" />
+    <p><input type="number" id="valor-recebido" placeholder="Valor recebido" oninput="calcularTroco()"></p>
     <p>Troco: R$ <span id="troco">0.00</span></p>
-    <h4>Forma de Pagamento:</h4>
-    <button class="pagamento-btn" onclick="setPagamento('Dinheiro')">Dinheiro</button>
-    <button class="pagamento-btn" onclick="setPagamento('Pix')">Pix</button>
-    <button class="pagamento-btn" onclick="setPagamento('Cartão')">Cartão</button>
-    <p>Selecionado: <b id="pagamento">Nenhum</b></p>
+    <p>Forma de Pagamento:</p>
+    <button onclick="setPagamento('Dinheiro')">Dinheiro</button>
+    <button onclick="setPagamento('Pix')">Pix</button>
+    <button onclick="setPagamento('Cartão')">Cartão</button>
+    <p>Selecionado: <span id="pagamento">Nenhum</span></p>
     <button onclick="imprimirFichas()">🧾 Imprimir Fichas</button>
     <button onclick="cancelarVenda()">❌ Cancelar Venda</button>
-  </div>
-
-  <div class="painel">
-    <button onclick="gerarRelatorio()">📄 Relatório Final</button>
-  </div>
+    <h2>📄 Relatório Final</h2>
+    <button onclick="gerarRelatorio()">Gerar Relatório</button>
+    <script src="script.js"></script>
 </body>
 </html>
