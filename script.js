@@ -150,7 +150,8 @@ function imprimirFichas() {
   const recebido = parseFloat(document.getElementById("valorRecebido").value || 0).toFixed(2);
   const trocoFinal = troco.toFixed(2);
 
-  const doc = new jsPDF();
+  const doc = new jsPDF(); // ← agora FUNCIONA!
+
   doc.setFontSize(16);
   doc.text("🎟️ FICHA DO BINGO 🎟️", 20, 20);
 
@@ -174,9 +175,4 @@ function imprimirFichas() {
   doc.text("Obrigado por colaborar com o nosso bingo! 🎉", 20, y);
 
   doc.save("ficha.pdf");
-}
-
-// Abrir relatório
-function abrirRelatorio() {
-  window.open("https://bingo-fichas-site.onrender.com/relatorio", "_blank");
 }
