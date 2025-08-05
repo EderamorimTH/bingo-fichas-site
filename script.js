@@ -78,34 +78,29 @@ function calcularTroco() {
   document.getElementById("troco").textContent = troco >= 0 ? troco.toFixed(2) : "0.00";
 }
 
-async function imprimirFichas() {
+function imprimirFichas() {
   if (carrinho.length === 0) return alert("Carrinho vazio!");
-  if (!pagamentoSelecionado) return alert("Selecione um pagamento!");
-  const total = parseFloat(document.getElementById("total").textContent);
-  const valorRecebido = parseFloat(document.getElementById("valor-recebido").value || 0);
-  const troco = parseFloat(document.getElementById("troco").textContent);
 
-  try {
-    const response = await fetch("https://bingo-fichas-site.onrender.com/vender", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ carrinho, pagamentoSelecionado, total, valorRecebido, troco })
-    });
-    if (!response.ok) throw new Error("Erro ao registrar venda");
-    alert("Fichas registradas!");
-    cancelarVenda();
-  } catch (error) {
-    alert("Erro: " + error.message);
-  }
+  let texto = "🎟️ FICHA DO BINGO 🎟️\n";
+  texto += "=====================\n";
+  carrinho.forEach(item => {
+    texto += `${item.qtd}x ${item.nome} - R$${item.preco.toFixed(2)}\n`;
+  });
+  texto += "---------------------\n";
+  texto += `Pagamento: ${pagamentoSelecionado}\n`;
+  texto += `Total: R$ ${parseFloat(document.getElementById("total").textContent).toFixed(2)}\n`;
+
+  const blob = new Blob([texto], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ficha.txt";
+  a.click();
+
+  alert("Ficha gerada! Agora abra com RawBT para imprimir.");
 }
 
-function cancelarVenda() {
-  carrinho = [];
-  atualizarCarrinho();
-  document.getElementById("valor-recebido").value = "";
-  document.getElementById("troco").textContent = "0.00";
-  pagamentoSelecionado = "";
-  document.getElementById("pagamento").textContent = "Nenhum";
 }
 
 function gerarRelatorio() {
