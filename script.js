@@ -1,211 +1,123 @@
 let produtos = [];
-   let carrinho = [];
-   let pagamentoSelecionado = "";
-   let valorRecebido = 0;
-   let troco = 0;
-   let editIndex = null;
+let carrinho = [];
+let pagamentoSelecionado = "";
+let troco = 0;
 
-   if (localStorage.getItem("produtos")) {
-     produtos = JSON.parse(localStorage.getItem("produtos"));
-     atualizarListaProdutos();
-   }
+if (localStorage.getItem("produtos")) {
+  produtos = JSON.parse(localStorage.getItem("produtos"));
+  atualizarListaProdutos();
+}
 
-   function adicionarOuEditarProduto() {
-     const nomeInput = document.getElementById("nomeProduto");
-     const precoInput = document.getElementById("precoProduto");
-     if (!nomeInput || !precoInput) {
-       alert("Erro: Campos de entrada não encontrados!");
-       return;
-     }
-     const nome = nomeInput.value.trim();
-     const preco = parseFloat(precoInput.value);
-     if (!nome || isNaN(preco) || preco <= 0) {
-       alert("Preencha corretamente nome e preço.");
-       return;
-     }
-     if (editIndex !== null) {
-       produtos[editIndex] = { nome, preco };
-       editIndex = null;
-     } else {
-       produtos.push({ nome, preco });
-     }
-     localStorage.setItem("produtos", JSON.stringify(produtos));
-     atualizarListaProdutos();
-     nomeInput.value = "";
-     precoInput.value = "";
-   }
+function adicionarProduto() {
+  const nome = document.getElementById("nomeProduto").value;
+  const preco = parseFloat(document.getElementById("precoProduto").value);
 
-   function editarProduto(index) {
-     const produto = produtos[index];
-     document.getElementById("nomeProduto").value = produto.nome;
-     document.getElementById("precoProduto").value = produto.preco;
-     editIndex = index;
-   }
+  if (!nome || isNaN(preco)) {
+    alert("Preencha nome e preço corretamente.");
+    return;
+  }
 
-   function excluirProduto(index) {
-     if (confirm("Deseja excluir o produto " + produtos[index].nome + "?")) {
-       produtos.splice(index, 1);
-       localStorage.setItem("produtos", JSON.stringify(produtos));
-       atualizarListaProdutos();
-     }
-   }
+  const produto = { nome, preco };
+  produtos.push(produto);
+  localStorage.setItem("produtos", JSON.stringify(produtos));
+  atualizarListaProdutos();
 
-   function atualizarListaProdutos() {
-     const lista = document.getElementById("listaProdutos");
-     if (!lista) return;
-     lista.innerHTML = "";
-     produtos.forEach((p, i) => {
-       const item = document.createElement("div");
-       item.innerHTML = `
-         <button onclick="adicionarAoCarrinho(${i})">${p.nome} - R$${p.preco.toFixed(2)}</button>
-         <button class="edit-btn" onclick="editarProduto(${i})">✏️</button>
-         <button class="delete-btn" onclick="excluirProduto(${i})">🗑</button>
-       `;
-       lista.appendChild(item);
-     });
-   }
+  document.getElementById("nomeProduto").value = "";
+  document.getElementById("precoProduto").value = "";
+}
 
-   function adicionarAoCarrinho(index) {
-     const existente = carrinho.find(item => item.nome === produtos[index].nome);
-     if (existente) {
-       existente.qtd++;
-     } else {
-       carrinho.push({ ...produtos[index], qtd: 1 });
-     }
-     atualizarCarrinho();
-   }
+function atualizarListaProdutos() {
+  const lista = document.getElementById("listaProdutos");
+  lista.innerHTML = "";
 
-   function atualizarCarrinho() {
-     const lista = document.getElementById("carrinho");
-     if (!lista) return;
-     lista.innerHTML = "";
-     carrinho.forEach((item, i) => {
-       const div = document.createElement("div");
-       div.innerHTML = `
-         ${item.qtd}x ${item.nome} - R$${(item.qtd * item.preco).toFixed(2)}
-         <button onclick="editarQtd(${i}, 1)">+</button>
-         <button onclick="editarQtd(${i}, -1)">-</button>
-         <button onclick="removerItem(${i})">🗑</button>
-       `;
-       lista.appendChild(div);
-     });
-     const total = carrinho.reduce((s, item) => s + item.qtd * item.preco, 0);
-     const totalElement = document.getElementById("total");
-     if (totalElement) totalElement.textContent = total.toFixed(2);
-     calcularTroco();
-   }
+  produtos.forEach((p, i) => {
+    const item = document.createElement("div");
+    item.innerHTML = `
+      <button onclick="adicionarAoCarrinho(${i})">${p.nome} - R$${p.preco.toFixed(2)}</button>
+    `;
+    lista.appendChild(item);
+  });
+}
 
-   function editarQtd(index, delta) {
-     carrinho[index].qtd += delta;
-     if (carrinho[index].qtd <= 0) {
-       carrinho.splice(index, 1);
-     }
-     atualizarCarrinho();
-   }
+function adicionarAoCarrinho(index) {
+  const existente = carrinho.find(item => item.nome === produtos[index].nome);
+  if (existente) {
+    existente.qtd++;
+  } else {
+    carrinho.push({ ...produtos[index], qtd: 1 });
+  }
+  atualizarCarrinho();
+}
 
-   function removerItem(index) {
-     carrinho.splice(index, 1);
-     atualizarCarrinho();
-   }
+function atualizarCarrinho() {
+  const lista = document.getElementById("carrinho");
+  lista.innerHTML = "";
 
-   function cancelarVenda() {
-     carrinho = [];
-     pagamentoSelecionado = "";
-     const totalElement = document.getElementById("total");
-     const recebidoInput = document.getElementById("valorRecebido");
-     const trocoElement = document.getElementById("troco");
-     if (totalElement) totalElement.textContent = "0.00";
-     if (recebidoInput) recebidoInput.value = "";
-     if (trocoElement) trocoElement.textContent = "0.00";
-     document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
-     atualizarCarrinho();
-   }
+  carrinho.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      ${item.qtd}x ${item.nome} - R$${(item.qtd * item.preco).toFixed(2)}
+      <button onclick="editarQtd(${i}, 1)">+</button>
+      <button onclick="editarQtd(${i}, -1)">-</button>
+      <button onclick="removerItem(${i})">🗑</button>
+    `;
+    lista.appendChild(div);
+  });
 
-   function selecionarPagamento(forma) {
-     pagamentoSelecionado = forma;
-     document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
-     const btn = document.getElementById(`btn-${forma}`);
-     if (btn) btn.classList.add("selecionado");
-   }
+  const total = carrinho.reduce((s, item) => s + item.qtd * item.preco, 0);
+  document.getElementById("total").textContent = total.toFixed(2);
 
-   function calcularTroco() {
-     const totalElement = document.getElementById("total");
-     const recebidoInput = document.getElementById("valorRecebido");
-     const trocoElement = document.getElementById("troco");
-     if (!totalElement || !recebidoInput || !trocoElement) return;
-     const total = parseFloat(totalElement.textContent);
-     valorRecebido = parseFloat(recebidoInput.value || 0);
-     if (!isNaN(valorRecebido)) {
-       troco = valorRecebido - total;
-       trocoElement.textContent = troco.toFixed(2);
-     }
-   }
+  calcularTroco();
+}
 
-   async function finalizarVenda() {
-     if (carrinho.length === 0 || !pagamentoSelecionado) {
-       alert("Preencha todos os dados da venda.");
-       return;
-     }
-     const totalElement = document.getElementById("total");
-     if (!totalElement) return;
-     const total = parseFloat(totalElement.textContent);
-     try {
-       const response = await fetch("https://bingo-fichas-site.onrender.com/vender", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-           carrinho,
-           pagamento: pagamentoSelecionado,
-           total,
-           valorRecebido,
-           troco
-         })
-       });
-       if (!response.ok) throw new Error("Erro ao registrar venda");
-       alert("Venda registrada com sucesso!");
-       cancelarVenda();
-     } catch (e) {
-       alert("Erro ao registrar venda.");
-       console.error(e);
-     }
-   }
+function editarQtd(index, delta) {
+  carrinho[index].qtd += delta;
+  if (carrinho[index].qtd <= 0) {
+    carrinho.splice(index, 1);
+  }
+  atualizarCarrinho();
+}
 
-   function imprimirFichas() {
-     if (carrinho.length === 0) {
-       alert("Carrinho vazio!");
-       return;
-     }
-     if (!pagamentoSelecionado) {
-       alert("Selecione uma forma de pagamento!");
-       return;
-     }
-     const { jsPDF } = window.jspdf;
-     const doc = new jsPDF({
-       orientation: "portrait",
-       unit: "mm",
-       format: [50, 30]
-     });
-     let pageAdded = false;
-     carrinho.forEach(item => {
-       for (let i = 0; i < item.qtd; i++) {
-         if (pageAdded) {
-           doc.addPage([50, 30], "portrait");
-         }
-         doc.setFontSize(7);
-         doc.text("Ficha do Bingo", 25, 3, { align: "center", maxWidth: 44 });
-         doc.setFontSize(5);
-         doc.text(item.nome, 25, 7, { align: "center", maxWidth: 44 });
-         doc.text(`Total: R$ ${item.preco.toFixed(2)}`, 25, 11, { align: "center", maxWidth: 44 });
-         doc.setFontSize(3);
-         doc.text("Obrigado por colaborar!", 25, 15, { align: "center", maxWidth: 44 });
-         doc.setFontSize(5);
-         doc.text("------", 25, 18, { align: "center" });
-         pageAdded = true;
-       }
-     });
-     doc.save("fichas.pdf");
-   }
+function removerItem(index) {
+  carrinho.splice(index, 1);
+  atualizarCarrinho();
+}
 
-   function abrirRelatorio() {
-     window.open("https://bingo-fichas-site.onrender.com/relatorio", "_blank");
-   }
+function cancelarVenda() {
+  carrinho = [];
+  pagamentoSelecionado = "";
+  document.getElementById("total").textContent = "0.00";
+  document.getElementById("valorRecebido").value = "";
+  document.getElementById("troco").textContent = "0.00";
+  document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
+  atualizarCarrinho();
+}
+
+function selecionarPagamento(forma) {
+  pagamentoSelecionado = forma;
+  document.querySelectorAll(".forma-pagamento button").forEach(btn => btn.classList.remove("selecionado"));
+  document.getElementById(`btn-${forma}`).classList.add("selecionado");
+}
+
+function calcularTroco() {
+  const total = parseFloat(document.getElementById("total").textContent);
+  const recebido = parseFloat(document.getElementById("valorRecebido").value);
+
+  if (!isNaN(recebido)) {
+    troco = recebido - total;
+    document.getElementById("troco").textContent = troco.toFixed(2);
+  }
+}
+
+function finalizarVenda() {
+  if (carrinho.length === 0 || !pagamentoSelecionado) {
+    alert("Preencha todos os dados.");
+    return;
+  }
+
+  alert("Venda registrada!");
+  cancelarVenda();
+}
+
+function imprimirFichas() {
+  if (carrinho.length
