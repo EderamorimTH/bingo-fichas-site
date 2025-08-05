@@ -78,29 +78,21 @@ function calcularTroco() {
 
 async function imprimirFichas() {
   if (carrinho.length === 0) return alert("Carrinho vazio!");
+  if (!pagamentoSelecionado) return alert("Selecione um pagamento!");
   const total = parseFloat(document.getElementById("total").textContent);
-  const valorRecebido = parseFloat(document.getElementById("valor-recebido").value);
+  const valorRecebido = parseFloat(document.getElementById("valor-recebido").value || 0);
   const troco = parseFloat(document.getElementById("troco").textContent);
 
-  await fetch("https://bingo-fichas-backend.onrender.com/vender", { ...
+  await fetch("https://bingo-fichas-site.onrender.com/vender", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ carrinho, pagamentoSelecionado, total, valorRecebido, troco })
   });
 
-  alert("Fichas registradas e prontas para imprimir!");
+  alert("Fichas registradas!");
   cancelarVenda();
 }
 
-function cancelarVenda() {
-  carrinho = [];
-  atualizarCarrinho();
-  document.getElementById("valor-recebido").value = "";
-  document.getElementById("troco").textContent = "0.00";
-  pagamentoSelecionado = "";
-  document.getElementById("pagamento").textContent = "Nenhum";
-}
-
 function gerarRelatorio() {
-  window.open("https://bingo-fichas-backend.onrender.com/relatorio", "_blank");
+  window.open("https://bingo-fichas-site.onrender.com/relatorio", "_blank");
 }
