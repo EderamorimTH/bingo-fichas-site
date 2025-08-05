@@ -66,7 +66,6 @@ function atualizarCarrinho() {
 
   const total = carrinho.reduce((s, item) => s + item.qtd * item.preco, 0);
   document.getElementById("total").textContent = total.toFixed(2);
-
   calcularTroco();
 }
 
@@ -109,15 +108,50 @@ function calcularTroco() {
   }
 }
 
+function imprimirFichas() {
+  const total = parseFloat(document.getElementById("total").textContent).toFixed(2);
+  const recebido = parseFloat(document.getElementById("valorRecebido").value || 0).toFixed(2);
+  const trocoFinal = troco.toFixed(2);
+
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: [50, 30]
+  });
+
+  doc.setFontSize(8);
+  doc.text("🎟️ FICHA DO BINGO 🎟️", 5, 7);
+
+  let y = 12;
+  carrinho.forEach(item => {
+    doc.text(`${item.qtd}x ${item.nome}`, 5, y);
+    y += 4;
+  });
+
+  doc.text(`Pagamento: ${pagamentoSelecionado}`, 5, y); y += 4;
+  doc.text(`Total: R$ ${total}`, 5, y); y += 4;
+  doc.text(`Recebido: R$ ${recebido}`, 5, y); y += 4;
+  doc.text(`Troco: R$ ${trocoFinal}`, 5, y); y += 4;
+
+  doc.save("ficha.pdf");
+}
+
 function finalizarVenda() {
   if (carrinho.length === 0 || !pagamentoSelecionado) {
     alert("Preencha todos os dados.");
     return;
   }
 
+  imprimirFichas();
   alert("Venda registrada!");
   cancelarVenda();
 }
 
-function imprimirFichas() {
-  if (carrinho.length
+function abrirRelatorio() {
+  let relatorio = "📋 RELATÓRIO DE VENDAS\n\n";
+  carrinho.forEach(item => {
+    relatorio += `${item.qtd}x ${item.nome} - R$ ${(item.qtd * item.preco).toFixed(2)}\n`;
+  });
+  relatorio += `\nTotal: R$ ${parseFloat(document.getElementById("total").textContent).toFixed(2)}`;
+  alert(relatorio);
+}
