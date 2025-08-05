@@ -10,6 +10,8 @@ function adicionarProduto() {
     atualizarBotoes();
     document.getElementById("nome").value = "";
     document.getElementById("preco").value = "";
+  } else {
+    alert("Digite um nome e um preço válido!");
   }
 }
 
@@ -18,7 +20,7 @@ function atualizarBotoes() {
   container.innerHTML = "";
   produtos.forEach((p, i) => {
     const btn = document.createElement("button");
-    btn.textContent = `${p.nome} - R$ ${p.preco}`;
+    btn.textContent = `${p.nome} - R$ ${p.preco.toFixed(2)}`;
     btn.className = "produto-btn";
     btn.onclick = () => adicionarAoCarrinho(i);
     container.appendChild(btn);
@@ -43,7 +45,7 @@ function atualizarCarrinho() {
     total += item.qtd * item.preco;
     const div = document.createElement("div");
     div.className = "carrinho-item";
-    div.innerHTML = `${item.nome} - R$${item.preco} x ${item.qtd}
+    div.innerHTML = `${item.nome} - R$${item.preco.toFixed(2)} x ${item.qtd}
       <button onclick="alterarQtd(${i}, 1)">+</button>
       <button onclick="alterarQtd(${i}, -1)">-</button>
       <button onclick="removerItem(${i})">x</button>`;
@@ -83,14 +85,27 @@ async function imprimirFichas() {
   const valorRecebido = parseFloat(document.getElementById("valor-recebido").value || 0);
   const troco = parseFloat(document.getElementById("troco").textContent);
 
-  await fetch("https://bingo-fichas-site.onrender.com/vender", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ carrinho, pagamentoSelecionado, total, valorRecebido, troco })
-  });
+  try {
+    const response = await fetch("https://bingo-fichas-site.onrender.com/vender", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ carrinho, pagamentoSelecionado, total, valorRecebido, troco })
+    });
+    if (!response.ok) throw new Error("Erro ao registrar venda");
+    alert("Fichas registradas!");
+    cancelarVenda();
+  } catch (error) {
+    alert("Erro: " + error.message);
+  }
+}
 
-  alert("Fichas registradas!");
-  cancelarVenda();
+function cancelarVenda() {
+  carrinho = [];
+  atualizarCarrinho();
+  document.getElementById("valor-recebido").value = "";
+  document.getElementById("troco").textContent = "0.00";
+  pagamentoSelecionado = "";
+  document.getElementById("pagamento").textContent = "Nenhum";
 }
 
 function gerarRelatorio() {
